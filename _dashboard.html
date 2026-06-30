@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - LawsuitFiles</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <header class="admin-header">
+    <h1>⚖️ LawsuitFiles Admin Panel</h1>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="cases.html">Cases</a>
+      <a href="logout.html" id="logoutBtn">Logout</a>
+    </nav>
+  </header>
+
+  <main class="admin-dashboard">
+    <h2>Case Review Submissions</h2>
+    <table id="caseTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Message</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Firestore data will load here -->
+      </tbody>
+    </table>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "firebase/app";
+    import { getFirestore, collection, getDocs } from "firebase/firestore";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "openclass-920a8.firebaseapp.com",
+      projectId: "openclass-920a8",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadCases() {
+      const querySnapshot = await getDocs(collection(db, "caseReviews"));
+      const tbody = document.querySelector("#caseTable tbody");
+      tbody.innerHTML = "";
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const row = `<tr>
+          <td>${data.firstName} ${data.lastName}</td>
+          <td>${data.email}</td>
+          <td>${data.phone}</td>
+          <td>${data.message}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    loadCases();
+  </script>
+</body>
+</html>
